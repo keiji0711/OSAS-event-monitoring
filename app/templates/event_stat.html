@@ -1,0 +1,82 @@
+{% extends 'adminBase.html' %}
+
+{% block content %}
+<div class="h-screen flex flex-col p-4 overflow-hidden">
+    <h1 class="text-2xl font-bold mb-4 text-center">Event Statistics</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+            <h2 class="text-lg font-semibold">Total Events</h2>
+            <p class="text-2xl font-bold">0</p>
+        </div>
+        <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+            <h2 class="text-lg font-semibold">Total Participants</h2>
+            <p class="text-2xl font-bold">0</p>
+        </div>
+        <div class="bg-white shadow-lg rounded-lg p-4 text-center">
+            <h2 class="text-lg font-semibold">Completed Events</h2>
+            <p class="text-2xl font-bold">0</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-4 mt-4 flex-grow">
+        <div class="bg-white shadow-lg rounded-lg p-4 w-full md:w-1/2 flex flex-col">
+            <h2 class="text-lg font-semibold mb-2 text-center">Event Breakdown</h2>
+            <div class="flex-grow">
+                <canvas id="eventChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg p-4 w-full md:w-1/2 flex flex-col">
+            <h2 class="text-lg font-semibold mb-2 text-center">Event Breakdown Table</h2>
+            <div class="overflow-auto max-h-60">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2">Event Name</th>
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Participants</th>
+                            <th class="border p-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="text-center">
+                            <td class="border p-2">Sample Event</td>
+                            <td class="border p-2">YYYY-MM-DD</td>
+                            <td class="border p-2">0</td>
+                            <td class="border p-2">Pending</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('eventChart').getContext('2d');
+    const eventChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Sample Event'],
+            datasets: [{
+                label: 'Participants',
+                data: [0],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

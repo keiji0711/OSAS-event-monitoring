@@ -1,0 +1,230 @@
+{% extends "adminBase.html" %}
+
+{% block title %}Events{% endblock %}
+
+{% block heading %}Events Lists{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-xl shadow-lg">
+    <!-- Search, Filter, and Add Button -->
+    <div class="flex justify-between items-center mb-6 space-x-6">
+        <!-- School Year Input -->
+        <div class="flex-1">
+            <input type="text" id="schoolYearInput" placeholder="Enter School Year (e.g., 2024-2025)" 
+                   class="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out" />
+        </div>
+
+        <!-- Semester Input -->
+        <div class="flex-1">
+            <input type="text" id="semesterInput" placeholder="Enter Semester (1st or 2nd)" 
+                   class="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out" />
+        </div>
+
+        <!-- Search Bar -->
+        <div class="flex-1">
+            <input type="text" id="searchEvent" placeholder="Search events..." 
+                   class="w-full px-5 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-300 ease-in-out" />
+        </div>
+
+        <!-- Add Event Button -->
+        <button id="addEventBtn" class="bg-gray-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-700 transition duration-200 ease-in-out flex items-center space-x-2" onclick="openModal()">
+            <i data-feather="plus" class="w-5 h-5"></i>
+            <span class="font-semibold">Add Event</span>
+        </button>
+    </div>
+
+    <!-- Event Table -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+        <table id="eventTable" class="min-w-full bg-white border-separate border-spacing-0">
+            <thead class="bg-gradient-to-r from-gray-600 to-gray-400 text-white text-lg">
+                <tr>
+                    <th class="py-4 px-6 text-left">Event Name</th>
+                    <th class="py-4 px-6 text-left">Date</th>
+                    <th class="py-4 px-6 text-left">Time</th>
+                    <th class="py-4 px-6 text-left">School Year</th>
+                    <th class="py-4 px-6 text-left">Semester</th>
+                    <th class="py-4 px-6 text-left">Status</th>
+                    <th class="py-4 px-6 text-left">Action</th>
+                </tr>
+            </thead>
+            <tbody id="eventTableBody">
+                {% for i in Events %}
+                <td class="py-4 px-6 border-b">
+                    <a href="{{ url_for('adminEvents.eventAttendance', event_name=i[1], event_id=i[0]) }}" class="font-medium text-gray-800 hover:text-gray-600">
+                        {{ i[1] }}
+                    </a>
+                </td>
+                <td class="py-4 px-6 border-b">{{ i[2] }}</td>
+                <td class="py-4 px-6 border-b">{{ i[3] }}</td>
+                <td class="py-4 px-6 border-b">{{ i[4] }}</td>
+                <td class="py-4 px-6 border-b">{{ i[5] }}</td>
+                <td class="py-4 px-6 border-b">
+                    <span class="px-3 py-1 text-sm rounded-full 
+                        {% if i[6] == 'active' %}
+                            bg-green-200 text-green-600
+                        {% else %}  
+                            bg-red-200 text-red-600
+                        {% endif %}
+                    ">
+                        {{ i[6] }}
+                    </span>
+                </td>
+                
+                    <td class="py-4 px-6 border-b">
+                        <div class="flex space-x-3">
+                            <button class="text-yellow-600 hover:text-yellow-800 flex items-center space-x-1" 
+                                onclick="openEditModal({{ i[0] }}, '{{ i[1] }}', '{{ i[2] }}', '{{ i[3] }}', '{{ i[4] }}', '{{ i[5] }}')">
+                                <i data-feather="edit" class="w-5 h-5"></i> 
+                                <span class="font-medium">Edit</span>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 flex items-center space-x-1">
+                                <i data-feather="archive" class="w-5 h-5"></i> 
+                                <span class="font-medium">Archive</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="flashMessage" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">{{ messages[0] }}</h3>
+        <button id="closeFlashMessage" class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
+          Close
+        </button>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-end space-x-4">
+        <button class="px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-200 transition duration-200 ease-in-out">Previous</button>
+        <button class="px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-200 transition duration-200 ease-in-out">Next</button>
+    </div>
+</div>
+
+<!-- Modal for Adding Event -->
+<div id="eventModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-semibold mb-4">Add New Event</h2>
+        <form id="eventForm" action="{{url_for('adminEvents.addEvents')}}" method="post">
+            <div class="mb-4">
+                <label for="eventName" class="block text-gray-700">Event Name</label>
+                <input type="text" id="eventName" name="eventName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" placeholder="Enter event name" required>
+            </div>
+            <div class="mb-4">
+                <label for="eventDate" class="block text-gray-700">Event Date</label>
+                <input type="date" id="eventDate" name="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+            </div>
+            <div class="mb-4">
+                <label for="eventTime" class="block text-gray-700">Event Time</label>
+                <input type="time" id="eventTime" name="time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+            </div>
+            <div class="mb-4">
+                <label for="schoolYear" class="block text-gray-700">School Year</label>
+                <input type="text" id="schoolYear" name="schoolYear" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" placeholder="e.g., 2024-2025" required>
+            </div>
+            <div class="mb-4">
+                <label for="semester" class="block text-gray-700">Semester</label>
+                <select id="semester" name="semester" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+                    <option value="" disabled selected>Select semester</option>
+                    <option value="1st Semester">1st Semester</option>
+                    <option value="2nd Semester">2nd Semester</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <input type="submit" value="Save Event" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out w-full">
+            </div>
+        </form>
+        <button onclick="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-200 ease-in-out w-full">Cancel</button>
+    </div>
+</div>
+
+<!-- Modal for Editing Event -->
+<div id="editEventModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+        <h2 class="text-xl font-semibold mb-4">Edit Event</h2>
+        <form id="editEventForm" action="{{ url_for('adminEvents.editEvent') }}" method="post">
+            <input type="hidden" id="editEventId" name="eventId">
+
+            <div class="mb-4">
+                <label for="editEventName" class="block text-gray-700">Event Name</label>
+                <input type="text" id="editEventName" name="eventName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" placeholder="Enter event name" required>
+            </div>
+            <div class="mb-4">
+                <label for="editEventDate" class="block text-gray-700">Event Date</label>
+                <input type="date" id="editEventDate" name="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+            </div>
+            <div class="mb-4">
+                <label for="editEventTime" class="block text-gray-700">Event Time</label>
+                <input type="time" id="editEventTime" name="time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+            </div>
+            <div class="mb-4">
+                <label for="editSchoolYear" class="block text-gray-700">School Year</label>
+                <input type="text" id="editSchoolYear" name="schoolYear" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" placeholder="e.g., 2024-2025" required>
+            </div>
+            <div class="mb-4">
+                <label for="editSemester" class="block text-gray-700">Semester</label>
+                <select id="editSemester" name="semester" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required>
+                    <option value="" disabled>Select semester</option>
+                    <option value="1st Semester">1st Semester</option>
+                    <option value="2nd Semester">2nd Semester</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <input type="submit" value="Update Event" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out w-full">
+            </div>
+        </form>
+        <button onclick="closeEditModal()" class="bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-200 ease-in-out w-full">Cancel</button>
+    </div>
+</div>
+
+
+
+<script>
+    // Open the modal
+    function openModal() {
+        document.getElementById('eventModal').classList.remove('hidden');
+    }
+
+    // Close the modal
+    function closeModal() {
+        document.getElementById('eventModal').classList.add('hidden');
+    }
+
+    const closeFlashMessage = document.getElementById('closeFlashMessage');
+    const flashMessage = document.getElementById('flashMessage');
+
+  if (closeFlashMessage && flashMessage) {
+    closeFlashMessage.addEventListener('click', () => {
+    flashMessage.classList.add('hidden');
+    });
+  }
+
+
+   // Open the Edit Modal and populate fields
+   function openEditModal(id, name, date, time, schoolYear, semester) {
+    document.getElementById('editEventId').value = id;
+    document.getElementById('editEventName').value = name;
+    document.getElementById('editEventDate').value = date;
+    document.getElementById('editEventTime').value = time;
+    document.getElementById('editSchoolYear').value = schoolYear;
+    document.getElementById('editSemester').value = semester;
+    document.getElementById('editEventModal').classList.remove('hidden');
+}
+
+// Close the Edit Modal
+function closeEditModal() {
+    document.getElementById('editEventModal').classList.add('hidden');
+}
+</script>
+
+{% endblock %}

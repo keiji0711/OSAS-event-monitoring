@@ -1,0 +1,110 @@
+{% extends "adminBase.html" %}
+{% block heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex flex-col h-full w-full overflow-hidden">
+    <!-- Header Section -->
+    <header class="bg-gray-100 border-b p-4 text-center h-[10%]">
+        <h1 class="text-3xl font-bold text-gray-600">Events Management Dashboard</h1>
+        <p class="text-gray-500">Efficiently manage events and track attendance</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 bg-gray-50 overflow-hidden flex flex-col">
+        <!-- Metrics Section -->
+        <section class="flex flex-grow justify-evenly gap-6 p-4">
+            <div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-md flex-shrink flex-grow max-w-[20%]">
+                <div class="text-blue-500 text-4xl mb-4">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-blue-600">Total Events</h3>
+                <p class="text-2xl font-bold">{{events}}</p>
+                <span class="text-sm text-gray-400">Overall events</span>
+            </div>
+            <div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-md flex-shrink flex-grow max-w-[20%]">
+                <div class="text-green-500 text-4xl mb-4">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-green-600">Attendance Rate</h3>
+                <p class="text-2xl font-bold">{{ final_rate}}%</p>
+                <span class="text-sm text-gray-400">Current average</span>
+            </div>
+            <div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-md flex-shrink flex-grow max-w-[20%]">
+                <div class="text-yellow-500 text-4xl mb-4">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-yellow-600">Active Events</h3>
+                <p class="text-2xl font-bold">4</p>
+                <span class="text-sm text-gray-400">Ongoing now</span>
+            </div>
+            <div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-md flex-shrink flex-grow max-w-[20%]">
+                <div class="text-indigo-500 text-4xl mb-4">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-indigo-600">Total Attendees</h3>
+                <p class="text-2xl font-bold">{{attendee}}</p>
+                <span class="text-sm text-gray-400">All attendees</span>
+            </div>
+        </section>
+
+        <!-- Main Content Section -->
+        <section class="flex flex-grow gap-6 p-4 overflow-hidden">
+            <!-- Recent Events -->
+            <div class="flex flex-col bg-white rounded-lg shadow-md flex-grow">
+                <div class="flex justify-between items-center bg-gray-600 text-white p-4 rounded-t-lg">
+                    <h2 class="text-lg font-semibold">Recent Events</h2>
+                </div>
+                <div class="p-4 overflow-hidden flex-grow">
+                    <div class="overflow-y-auto max-h-96"> <!-- Add fixed height and scrollable container -->
+                        <table class="w-full text-left border-collapse">
+                            <thead class="text-gray-600 bg-gray-200 text-sm uppercase tracking-wide">
+                                <tr>
+                                    <th class="py-3 px-4">Event Name</th>
+                                    <th class="py-3 px-4">Date</th>
+                                    <th class="py-3 px-4">Attendance</th>
+                                    <th class="py-3 px-4">S.Y</th>
+                                    <th class="py-3 px-4">Semester</th>
+                                    <th class="py-3 px-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                {% for i in eventsRec %}
+                                <tr class="border-b">
+                                    <td class="py-3 px-4">{{ i[0] }}</td>
+                                    <td class="py-3 px-4">{{ i[1] }}</td>
+                                    <td class="py-3 px-4">{{attendee}}/{{ i[2] }}</td>
+                                    <td class="py-3 px-4">{{ i[3] }}</td>
+                                    <td class="py-3 px-4">{{ i[4] }}</td>
+                                    <td class="py-3 px-4">
+                                        <span class="bg-green-100 text-green-600 text-sm px-2 py-1 rounded">{{ i[5] }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                
+                                <!-- Add more rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Summary -->
+            <div class="flex flex-col bg-white rounded-lg shadow-md flex-grow">
+                <div class="bg-gray-800 text-white p-4 rounded-t-lg">
+                    <h2 class="text-lg font-semibold">Attendance Summary</h2>
+                </div>
+                <div class="flex flex-col items-center justify-center flex-grow p-6">
+                    <p class="text-gray-600 text-center text-xl font-semibold">
+                        <span class="text-green-500">Present:</span> 75% &nbsp;|&nbsp; 
+                        <span class="text-red-500">Absent:</span> 15% &nbsp;|&nbsp; 
+                        <span class="text-yellow-500">Late:</span> 10%
+                    </p>
+                    <p class="text-gray-400 mt-2 text-sm">Track attendance metrics for all active events.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    
+</div>
+{% endblock %}

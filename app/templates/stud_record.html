@@ -1,0 +1,114 @@
+{% extends "adminBase.html" %}
+
+{% block content %}
+<style>
+    /* Prevent page scrolling */
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+</style>
+
+<div class="container mx-auto p-8 space-y-12 max-h-screen">
+
+    <!-- Student Profile Section -->
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Student Profile</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+            <!-- Profile Picture -->
+            <div class="flex justify-center">
+                <div class="w-60 h-60 border-4 border-gray-300 rounded-lg overflow-hidden shadow-md">
+                    <img src="../static/images/pfp.jpeg" alt="Profile Picture" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <!-- Student Information Table -->
+            <div class="col-span-2">
+                <table class="w-full table-auto border-collapse">
+                    <tbody>
+                        <tr>
+                            <td class="py-2 px-4 font-semibold text-gray-600">Name:</td>
+                            <td class="py-2 px-4 text-gray-800">{{ student[0] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 font-semibold text-gray-600">USN:</td>
+                            <td class="py-2 px-4 text-gray-800">{{ student[1] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 font-semibold text-gray-600">Department:</td>
+                            <td class="py-2 px-4 text-gray-800">{{ student[2] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 font-semibold text-gray-600">Contact No:</td>
+                            <td class="py-2 px-4 text-gray-800">{{ student[3] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Overview Section (scrollable) -->
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-7xl mx-auto h-96 overflow-y-auto">
+        <h3 class="text-3xl font-bold text-center text-gray-800 mb-8">Attendance Overview</h3>
+
+        <!-- Attendance Table -->
+        <table class="w-full table-auto border-collapse">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="py-4 px-6 text-left text-lg font-semibold text-gray-700">Category</th>
+                    <th class="py-4 px-6 text-left text-lg font-semibold text-gray-700">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Attended Events Row -->
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-4 px-6 text-gray-800 font-semibold flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-3"></i> Attended Events
+                    </td>
+                    <td class="py-4 px-6">
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                            {% for i in attendedEvents %}
+                            <li>{{ i[0] }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- Missed Events Row -->
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-4 px-6 text-gray-800 font-semibold flex items-center">
+                        <i class="fas fa-times-circle text-red-500 mr-3"></i> Missed Events
+                    </td>
+                    <td class="py-4 px-6">
+                        <ul class="list-disc pl-6 space-y-2 text-red-700">
+                            {% for i in missed %}
+                            <li>{{ i }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- Late Count Row -->
+                <tr class="hover:bg-gray-50">
+                    <td class="py-4 px-6 text-gray-800 font-semibold flex items-center">
+                        <i class="fas fa-exclamation-circle text-yellow-500 mr-3"></i> Late Count
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex justify-between items-center">
+                            <p class="text-3xl font-bold text-gray-800">5</p>
+                            <a href="{{ url_for('reports.studRec') }}">
+                                <button class="bg-yellow-500 hover:bg-yellow-600 text-white text-lg px-8 py-3 rounded-lg">
+                                    View Details
+                                </button>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
