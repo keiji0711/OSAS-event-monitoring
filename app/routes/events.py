@@ -10,11 +10,17 @@ now = datetime.now()
 
 @bp.route('/events')
 def events():
+
+    conn = mysql.connector.connect(
+        host='localhost',  
+        user='root',  
+        password='', 
+        database='OSAS_event_management'
+    )
     try:
-        conn = current_app.mysql
         cursor = conn.cursor()
         
-        cursor.execute("SELECT * FROM events")
+        cursor.execute("SELECT * FROM events where status = 'active'")
         Events = cursor.fetchall()
     
     except mysql.connector.Error as err:

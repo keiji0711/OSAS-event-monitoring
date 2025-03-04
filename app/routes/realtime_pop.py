@@ -1,4 +1,4 @@
-from flask import Blueprint,jsonify,current_app
+from flask import Blueprint,jsonify,current_app, request
 import mysql.connector
 
 bp = Blueprint('realtimePop', __name__, template_folder='templates')
@@ -39,3 +39,32 @@ WHERE
     ]
     
     return jsonify(logs_list)
+
+@bp.route('/archived_event/<int:event_id>', methods=['POST'])
+def archived_event(event_id):
+    conn = mysql.connector.connect(
+        host='localhost',  
+        user='root',  
+        password='', 
+        database='OSAS_event_management'
+    )
+    cursor = conn.cursor()
+
+    print(event_id)
+
+    try:
+        cursor.execute("UPDATE events SET status = 'archived' WHERE event_id = %s", (event_id,))
+        conn.commit()  
+        return jsonify({'message': 'Event archived successfully'}), 200
+    except mysql.connector.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
+
+
+

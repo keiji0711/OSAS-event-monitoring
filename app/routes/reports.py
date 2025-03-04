@@ -33,13 +33,13 @@ FROM students WHERE student_id = %s""",(stud_id,))
 FROM attendance  
 JOIN events ON attendance.event_id = events.event_id  
 JOIN students ON attendance.student_id = students.student_id  
-WHERE students.student_id = %s
+WHERE students.student_id = %s and events.status = 'active'
 """,(stud_id,))
     
     attendedEvents = cursor.fetchall()
     print(attendedEvents)
 
-    cursor.execute("SELECT event_name from events; ")
+    cursor.execute("SELECT event_name from events where status = 'active'; ")
     allEvents = cursor.fetchall()
     print(allEvents)
 
@@ -97,7 +97,31 @@ def searchStudents():
 
 @bp.route('/archeivedEvents')
 def archeivedEvents():
-    return render_template('archeived_events.html')
+    conn = None
+    cursor = None
+
+    try:
+        conn = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='',
+            database='OSAS_event_management'
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM events WHERE status = 'archived'")
+        archived = cursor.fetchall()
+    
+    except mysql.connector.Error as e:
+        return jsonify({'error': str(e)}), 500  # ✅ Proper error handling
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return render_template('archeived_events.html', archived=archived)
+
 
 
 @bp.route('/event_stat')

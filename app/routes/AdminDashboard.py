@@ -25,10 +25,13 @@ def adminDashboard():
     cursor.execute('SELECT COUNT(*) FROM attendance;')
     attendance = cursor.fetchone()[0]  
 
-    cursor.execute("""SELECT events.event_name,events.event_date, COUNT(attendance.attendance_id) AS attendance_count,events.SchoolYEar ,events.Semester,events.status 
+    cursor.execute("""SELECT events.event_name, events.event_date, COUNT(attendance.attendance_id) AS attendance_count, 
+       events.SchoolYear, events.Semester, events.status 
 FROM events
 LEFT JOIN attendance ON events.event_id = attendance.event_id
-GROUP BY events.event_id;""")
+WHERE events.status = 'active' 
+GROUP BY events.event_id;
+""")
     
     eventsRec = cursor.fetchall()
 
