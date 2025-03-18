@@ -127,3 +127,8 @@ def archeivedEvents():
 @bp.route('/event_stat')
 def event_stat():
     return render_template('event_stat.html')
+
+
+@bp.route('/verify_barcode', methods = ['POST', 'GET'])
+def verify_barcode():
+    return render_template('barcode_checking.html')

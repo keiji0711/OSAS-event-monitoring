@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Login - EventTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-center text-2xl font-semibold mb-6">Login</h2>
-        <div id="message" class="text-center text-red-500 mb-4"></div>
-        <form id="loginForm">
-            <div class="mb-4">
-                <label class="block text-gray-700">Username</label>
-                <input type="text" id="username" class="w-full p-2 border border-gray-300 rounded" required>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex justify-center items-center h-screen relative overflow-hidden">
+    <!-- Background Design -->
+    <div class="absolute inset-0 flex justify-center items-center -z-10">
+        <div class="w-[50rem] h-[50rem] bg-white opacity-20 rounded-full blur-[120px]"></div>
+    </div>
+
+    
+    <!-- Login Card -->
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-96 text-center relative z-10">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-3">EventTrack</h1>
+        <p class="text-gray-500 mb-6 text-sm">Automated Events & Attendance Monitoring</p>
+        <div id="message" class="text-red-500 mb-4"></div>
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-gray-700 text-left font-semibold">Username</label>
+                <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-400 transition" name="username" required>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700">Password</label>
-                <input type="password" id="password" class="w-full p-2 border border-gray-300 rounded" required>
+            <div>
+                <label class="block text-gray-700 text-left font-semibold">Password</label>
+                <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-400 transition" name="password" required>
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Login</button>
+            <button type="submit" class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition font-bold text-lg shadow-md">Login</button>
         </form>
-        <p class="mt-4 text-center">
-            Don't have an account? <a href="register.html" class="text-blue-500">Register</a>
+        <p class="mt-5 text-gray-600 text-sm">
+            Don't have an account? <a href="register.html" class="text-indigo-500 font-semibold hover:underline">Register</a>
         </p>
     </div>
 
@@ -42,7 +50,7 @@
             document.getElementById('message').innerText = data.message;
 
             if (data.status === "success") {
-                window.location.href = "dashboard.html"; // Redirect on success
+                window.location.href = "dashboard.html";
             }
         });
     </script>
